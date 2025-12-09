@@ -374,6 +374,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const shichusuimeiBtn = document.getElementById('shichusuimei-btn');
     const shichusuimeiScreen = document.getElementById('shichusuimei-screen');
     const shichusuimeiInput = document.getElementById('shichusuimei-input');
+    const adultScreen = document.getElementById('adult-screen');
+    const fateRouletteScreen = document.getElementById('fate-roulette-screen');
     const shichusuimeiResult = document.getElementById('shichusuimei-result');
     const sYearSelect = document.getElementById('s-year');
     const sMonthSelect = document.getElementById('s-month');
@@ -1096,11 +1098,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Adult mode event listeners
     document.getElementById('adult-btn').addEventListener('click', () => {
-        showScreen('adult-screen');
+        changeScreen(adultScreen, 'images/title.jpg', 0.3);
     });
 
     document.getElementById('adult-home-btn').addEventListener('click', () => {
-        showScreen('title-screen');
+        changeScreen(titleScreen, 'images/title.jpg', 0.3);
     });
 
     // Adult level selection
@@ -1201,4 +1203,274 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('adult-main').style.display = 'none';
         document.getElementById('level-selector-adult').style.display = 'block';
     }
+
+    // --- FATE ROULETTE FUNCTIONALITY ---
+    let fateGame = new FateRouletteGame();
+    let currentSpinResult = null;
+
+    // FATE ROULETTE event listeners
+    document.getElementById('fate-roulette-btn').addEventListener('click', () => {
+        changeScreen(fateRouletteScreen, 'images/title.jpg', 0.4);
+    });
+
+    document.getElementById('fate-home-btn').addEventListener('click', () => {
+        changeScreen(titleScreen, 'images/title.jpg', 0.3);
+    });
+
+    // 参加者追加
+    document.getElementById('add-participant-btn').addEventListener('click', () => {
+        addParticipant();
+    });
+
+    document.getElementById('participant-name').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            addParticipant();
+        }
+    });
+
+    // レベル選択
+    document.querySelectorAll('.fate-level-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const level = parseInt(btn.getAttribute('data-level'));
+            selectFateLevel(level);
+        });
+    });
+
+    // スピン実行
+    document.getElementById('spin-fate-btn').addEventListener('click', () => {
+        spinRoulette();
+    });
+
+    // モーダル関連
+    document.getElementById('close-fate-modal').addEventListener('click', () => {
+        closeFateModal();
+    });
+
+    document.getElementById('executed-btn').addEventListener('click', () => {
+        handleCommandResult('executed');
+    });
+
+    document.getElementById('passed-btn').addEventListener('click', () => {
+        handleCommandResult('passed');
+    });
+
+    document.getElementById('spin-again-btn').addEventListener('click', () => {
+        closeFateModal();
+    });
+
+    // FATE ROULETTE 関数
+    function addParticipant() {
+        const nameInput = document.getElementById('participant-name');
+        const name = nameInput.value.trim();
+        const errorDiv = document.getElementById('participant-error');
+
+        if (!name) {
+            showFateError('名前を入力してください');
+            return;
+        }
+
+        const result = fateGame.addParticipant(name);
+        
+        if (result.success) {
+            nameInput.value = '';
+            updateParticipantsDisplay();
+            updateSpinButton();
+            hideFateError();
+        } else {
+            showFateError(result.message);
+        }
+    }
+
+    function removeParticipant(participantId) {
+        fateGame.removeParticipant(participantId);
+        updateParticipantsDisplay();
+        updateSpinButton();
+    }
+
+    function updateParticipantsDisplay() {
+        const grid = document.getElementById('participants-grid');
+        const count = document.getElementById('participant-count');
+        
+        count.textContent = fateGame.participants.length;
+        
+        grid.innerHTML = '';
+        
+        fateGame.participants.forEach(participant => {
+            const card = document.createElement('div');
+            card.className = 'participant-card';
+            card.setAttribute('data-id', participant.id);
+            
+            card.innerHTML = `
+                <div class="participant-name">${participant.name}</div>
+                <button class="remove-participant" onclick="removeParticipant(${participant.id})">✕</button>
+            `;
+            
+            grid.appendChild(card);
+        });
+    }
+
+    function selectFateLevel(level) {
+        document.querySelectorAll('.fate-level-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        document.querySelector(`[data-level="${level}"]`).classList.add('active');
+        fateGame.setLevel(level);
+    }
+
+    function updateSpinButton() {
+        const spinBtn = document.getElementById('spin-fate-btn');
+        const canSpin = fateGame.participants.length >= 2;
+        
+        spinBtn.disabled = !canSpin;
+    }
+
+    function spinRoulette() {
+        if (fateGame.participants.length < 2) {
+            showFateError('参加者が2人以上必要です');
+            return;
+        }
+
+        // アニメーション開始
+        startSpinAnimation();
+
+        // 1.5秒後に結果表示
+        setTimeout(() => {
+            const result = fateGame.spinRoulette();
+            
+            if (result.success) {
+                stopSpinAnimation();
+                showSpinResult(result);
+                currentSpinResult = result;
+            } else {
+                stopSpinAnimation();
+                showFateError(result.message);
+            }
+        }, 1500);
+    }
+
+    function startSpinAnimation() {
+        const cards = document.querySelectorAll('.participant-card');
+        
+        cards.forEach((card, index) => {
+            setTimeout(() => {
+                card.classList.add('spinning');
+            }, index * 100);
+        });
+    }
+
+    function stopSpinAnimation() {
+        const cards = document.querySelectorAll('.participant-card');
+        cards.forEach(card => {
+            card.classList.remove('spinning');
+        });
+    }
+
+    function showSpinResult(result) {
+        // Executor and Target highlighting
+        const executorCard = document.querySelector(`[data-id="${result.executor.id}"]`);
+        const targetCard = document.querySelector(`[data-id="${result.target.id}"]`);
+        
+        if (executorCard) {
+            executorCard.classList.add('selected-executor');
+        }
+        if (targetCard) {
+            targetCard.classList.add('selected-target');
+        }
+
+        setTimeout(() => {
+            showFateResultModal(result);
+        }, 1000);
+    }
+
+    function showFateResultModal(result) {
+        const modal = document.getElementById('fate-result-modal');
+        const levelInfo = FATE_LEVELS[result.level];
+        
+        // レベル表示
+        document.getElementById('fate-current-level-emoji').textContent = levelInfo.emoji;
+        document.getElementById('fate-current-level-name').textContent = levelInfo.name;
+        
+        // 参加者表示
+        document.getElementById('executor-name').textContent = result.executor.name;
+        document.getElementById('target-name').textContent = result.target.name;
+        
+        // 命令表示
+        document.getElementById('fate-command-text').textContent = `「${result.command.text}」`;
+        
+        modal.style.display = 'block';
+    }
+
+    function closeFateModal() {
+        const modal = document.getElementById('fate-result-modal');
+        modal.style.display = 'none';
+        
+        // ハイライト解除
+        document.querySelectorAll('.participant-card').forEach(card => {
+            card.classList.remove('selected-executor', 'selected-target');
+        });
+    }
+
+    function handleCommandResult(action) {
+        if (action === 'passed' && currentSpinResult) {
+            fateGame.recordPass(currentSpinResult.executor.id);
+        }
+        
+        // アニメーション効果
+        const btn = document.getElementById(`${action === 'executed' ? 'executed' : 'passed'}-btn`);
+        btn.style.transform = 'scale(1.1)';
+        setTimeout(() => {
+            btn.style.transform = 'scale(1)';
+        }, 150);
+        
+        // 簡単なフィードバック表示
+        showFateMessage(action === 'executed' ? 
+            '✓ 実行完了！次の命令をお楽しみに' : 
+            '✗ パスしました。次こそは...'
+        );
+    }
+
+    function showFateError(message) {
+        const errorDiv = document.getElementById('participant-error');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+        }, 3000);
+    }
+
+    function hideFateError() {
+        const errorDiv = document.getElementById('participant-error');
+        errorDiv.style.display = 'none';
+    }
+
+    function showFateMessage(text) {
+        const message = document.createElement('div');
+        message.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ffd700, #ffb300);
+            color: #1a237e;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            z-index: 10000;
+            animation: fadeInOut 3s ease forwards;
+        `;
+        message.textContent = text;
+        
+        document.body.appendChild(message);
+        
+        setTimeout(() => {
+            if (message.parentNode) {
+                message.parentNode.removeChild(message);
+            }
+        }, 3000);
+    }
+
+    // Make global functions available for onclick handlers
+    window.removeParticipant = removeParticipant;
 });

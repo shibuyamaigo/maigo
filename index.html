@@ -32,6 +32,10 @@
                     <span class="btn-text">DANGEROUS TALK 🔥</span>
                     <span class="btn-desc">大人の本音トーク（お酒推奨）</span>
                 </button>
+                <button id="fate-roulette-btn" class="entrance-btn fate-btn">
+                    <span class="btn-text">FATE ROULETTE 🎰</span>
+                    <span class="btn-desc">運命のルーレット（飲み会ゲーム）</span>
+                </button>
             </div>
         </div>
     </section>
@@ -360,6 +364,128 @@
         </div>
     </section>
 
+    <!-- FATE ROULETTE Screen -->
+    <section id="fate-roulette-screen" class="screen">
+        <div class="fate-container">
+            <div class="fate-header">
+                <h2>🎰 FATE ROULETTE</h2>
+                <p>運命のルーレット - 占いが決めた命令だから...</p>
+            </div>
+
+            <!-- 参加者管理セクション -->
+            <div class="participants-section">
+                <div class="add-participant">
+                    <h3>参加者を追加</h3>
+                    <div class="participant-input">
+                        <input type="text" id="participant-name" placeholder="名前を入力" maxlength="8">
+                        <button id="add-participant-btn">+追加</button>
+                    </div>
+                    <div id="participant-error" class="error-message" style="display: none;"></div>
+                </div>
+                
+                <div class="participants-list">
+                    <h4>参加者一覧 (<span id="participant-count">0</span>/12人)</h4>
+                    <div id="participants-grid" class="participants-grid">
+                        <!-- 参加者カードが動的に追加される -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- レベル選択 -->
+            <div class="level-selection-fate">
+                <h3>命令レベル</h3>
+                <div class="fate-level-buttons">
+                    <button class="fate-level-btn active" data-level="1">
+                        <span class="level-emoji">😊</span>
+                        <span class="level-name">軽やか</span>
+                        <span class="level-desc">誰でも安心</span>
+                    </button>
+                    <button class="fate-level-btn" data-level="2">
+                        <span class="level-emoji">😍</span>
+                        <span class="level-name">スパイス</span>
+                        <span class="level-desc">ちょっとドキドキ</span>
+                    </button>
+                    <button class="fate-level-btn" data-level="3">
+                        <span class="level-emoji">🔥</span>
+                        <span class="level-name">攻め</span>
+                        <span class="level-desc">距離が縮まる</span>
+                    </button>
+                    <button class="fate-level-btn" data-level="4">
+                        <span class="level-emoji">💀</span>
+                        <span class="level-name">禁断</span>
+                        <span class="level-desc">覚悟が必要</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ルーレット実行ボタン -->
+            <div class="spin-section">
+                <button id="spin-fate-btn" class="spin-fate-btn" disabled>
+                    <span class="btn-icon">🎲</span>
+                    <span class="btn-text">SPIN FATE</span>
+                </button>
+                <p class="spin-requirement">※ 参加者2人以上で実行可能</p>
+            </div>
+
+            <button class="home-btn fate-home-btn" id="fate-home-btn">HOME</button>
+        </div>
+    </section>
+
+    </div>
+
+    <!-- FATE ROULETTE 結果モーダル -->
+    <div id="fate-result-modal" class="modal">
+        <div class="modal-content fate-result-content">
+            <span class="close-btn" id="close-fate-modal">&times;</span>
+            
+            <div class="fate-result-header">
+                <h2>⚡ FATE ⚡</h2>
+                <div class="fate-level-indicator" id="fate-level-indicator">
+                    <span id="fate-current-level-emoji">😊</span>
+                    <span id="fate-current-level-name">軽やか</span>
+                </div>
+            </div>
+
+            <div class="fate-participants-display">
+                <div class="fate-participant executor">
+                    <div class="participant-label">実行者</div>
+                    <div class="participant-avatar" id="executor-avatar">
+                        <span id="executor-name">太郎</span>
+                    </div>
+                </div>
+                
+                <div class="fate-arrow">→</div>
+                
+                <div class="fate-participant target">
+                    <div class="participant-label">対象者</div>
+                    <div class="participant-avatar" id="target-avatar">
+                        <span id="target-name">花子</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fate-command-display">
+                <h3>📜 THE COMMAND 📜</h3>
+                <div class="command-text" id="fate-command-text">
+                    「花子の目を見ながら好きなところを3つ言え」
+                </div>
+            </div>
+
+            <div class="fate-result-buttons">
+                <button class="fate-result-btn executed" id="executed-btn">
+                    <span>✓</span> 実行した
+                </button>
+                <button class="fate-result-btn passed" id="passed-btn">
+                    <span>✗</span> パス
+                </button>
+            </div>
+
+            <div class="fate-spin-again">
+                <button class="fate-again-btn" id="spin-again-btn">
+                    🎲 もう一度
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Transit Year カード詳細ポップアップ -->
@@ -452,6 +578,7 @@
 
     <script src="js/data.js"></script>
     <script src="js/adult-data.js"></script>
+    <script src="js/fate-data.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>
