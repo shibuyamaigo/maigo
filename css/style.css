@@ -357,6 +357,8 @@ button#calc-btn {
 
 #qa-screen {
     /* Background handled by changeScreen function like other screens */
+    /* Fallback background in case changeScreen fails */
+    background-color: #1a1a1a;
 }
 
 .qa-container {

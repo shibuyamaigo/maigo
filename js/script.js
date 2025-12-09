@@ -426,7 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     essenceBtn.addEventListener('click', () => {
-        changeScreen(qaScreen, 'images/qaback1.jpg', 0.7);
+        changeScreen(qaScreen, 'images/journey.jpg', 0.7);
     });
 
     shichusuimeiBtn.addEventListener('click', () => {
