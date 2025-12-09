@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // 安全なHOMEボタン設定
+    setTimeout(setupAllHomeButtons, 100);
     // --- Global Data ---
     let cardFeaturesData = {};
     let cardImplicationsData = {};
@@ -791,15 +793,43 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTYDisplay();
     });
     
+    // 追加のHOMEボタン安全設定（遅延ロード対応）
+    function setupAllHomeButtons() {
+        const homeButtonIds = [
+            'home-btn', 'home-btn-ty', 'qa-home-btn', 
+            'shichusuimei-home-btn', 'adult-home-btn', 'fate-home-btn'
+        ];
+        
+        homeButtonIds.forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn && !btn.dataset.homeSetup) {
+                btn.addEventListener('click', () => location.reload());
+                btn.dataset.homeSetup = 'true';
+            }
+        });
+    }
+    
     // ホームボタンのイベント
     function goToHome() {
         location.reload();
     }
     
-    homeBtn.addEventListener('click', goToHome);
-    homeBtnTy.addEventListener('click', goToHome);
-    qaHomeBtn.addEventListener('click', goToHome);
-    shichusuimeiHomeBtn.addEventListener('click', goToHome);
+    // 全てのHOMEボタンの設定
+    [
+        { element: homeBtn, id: 'home-btn' },
+        { element: homeBtnTy, id: 'home-btn-ty' }, 
+        { element: qaHomeBtn, id: 'qa-home-btn' },
+        { element: shichusuimeiHomeBtn, id: 'shichusuimei-home-btn' }
+    ].forEach(({ element, id }) => {
+        if (element) {
+            element.addEventListener('click', () => location.reload());
+        } else {
+            const fallbackElement = document.getElementById(id);
+            if (fallbackElement) {
+                fallbackElement.addEventListener('click', () => location.reload());
+            }
+        }
+    });
     
     // --- QA Functions ---
     
@@ -1103,9 +1133,11 @@ document.addEventListener('DOMContentLoaded', () => {
         selectAdultLevel(1);
     });
 
-    document.getElementById('adult-home-btn').addEventListener('click', () => {
-        location.reload();
-    });
+    // DANGEROUS TALK HOME button
+    const adultHomeBtn = document.getElementById('adult-home-btn');
+    if (adultHomeBtn) {
+        adultHomeBtn.addEventListener('click', () => location.reload());
+    }
 
     // Adult level selection
     document.querySelectorAll('.adult-level-btn').forEach(btn => {
@@ -1239,9 +1271,11 @@ document.addEventListener('DOMContentLoaded', () => {
         selectFateLevel(1);
     });
 
-    document.getElementById('fate-home-btn').addEventListener('click', () => {
-        location.reload();
-    });
+    // FATE ROULETTE HOME button
+    const fateHomeBtn = document.getElementById('fate-home-btn');
+    if (fateHomeBtn) {
+        fateHomeBtn.addEventListener('click', () => location.reload());
+    }
 
     // 参加者追加
     document.getElementById('add-participant-btn').addEventListener('click', () => {
@@ -1501,4 +1535,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Make global functions available for onclick handlers
     window.removeParticipant = removeParticipant;
+});
+
+// ページ完全読み込み後の追加設定（GitHubPages対応）
+window.addEventListener('load', () => {
+    setTimeout(setupAllHomeButtons, 200); // 二重設定を防ぐため重複チェック付き
 });
