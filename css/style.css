@@ -316,11 +316,13 @@ button#calc-btn {
 }
 .modal-content {
     background: linear-gradient(145deg, rgba(20, 20, 20, 0.95), rgba(40, 40, 40, 0.95));
-    margin: 5% auto; padding: 30px;
+    margin: 2% auto; padding: 20px;
     border: 2px solid var(--gold); border-radius: 15px;
     width: 90%; max-width: 500px; position: relative;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(20px);
+    max-height: 95vh;
+    overflow-y: auto;
 }
 .close-btn {
     color: var(--gold); float: right; font-size: 28px;
@@ -330,19 +332,20 @@ button#calc-btn {
 .close-btn:hover { color: #fff; }
 .modal-card-display { display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
 .modal-card-frame {
-    width: 200px; aspect-ratio: 1 / var(--fibonacci-aspect);
+    width: 133px; aspect-ratio: 1 / var(--fibonacci-aspect);
     border-radius: 10px; box-shadow: 0 15px 40px rgba(0,0,0,0.6);
     border: 2px solid rgba(212, 175, 55, 0.6);
-    overflow: hidden; margin-bottom: 20px;
+    overflow: hidden; margin-bottom: 15px;
 }
 .modal-card-frame img { width: 100%; height: 100%; object-fit: cover; }
 .modal-card-info { text-align: center; width: 100%; }
 .modal-card-info h2 { color: var(--gold); margin-bottom: 10px; font-size: 1.5rem; }
 .modal-card-info > p { color: #ccc; font-style: italic; margin-bottom: 20px; }
 .modal-card-description {
-    text-align: left; padding: 20px; background: rgba(0, 0, 0, 0.3);
+    text-align: left; padding: 15px; background: rgba(0, 0, 0, 0.3);
     border-radius: 10px; border: 1px solid rgba(212, 175, 55, 0.3);
-    max-height: 300px; overflow-y: auto;
+    max-height: 350px; overflow-y: auto;
+    margin-top: 10px;
 }
 .modal-card-description h3 { color: var(--gold); margin-bottom: 10px; font-size: 1rem; letter-spacing: 1px; }
 .modal-card-description p { color: #ddd; line-height: 1.6; margin-bottom: 15px; font-size: 0.9rem; white-space: pre-line; }
