@@ -1111,6 +1111,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.adult-level-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             currentAdultLevel = parseInt(btn.getAttribute('data-level'));
+            
+            // Special warning for ultimate taboo level
+            if (currentAdultLevel === 7) {
+                if (!confirm('⚠️ 警告 ⚠️\n\n究極のタブーレベルには以下が含まれます：\n• 犯罪に関する質問\n• 性的禁忌事項\n• 法律違反の境界線\n• 極めて不快な内容\n\n完全に自己責任です。\n本当に続行しますか？')) {
+                    return;
+                }
+                if (!confirm('最終確認\n\nこのレベルの質問により：\n• 人間関係が破綻する可能性\n• 法的問題に発展する可能性\n• 深刻な精神的苦痛を与える可能性\n\nがあります。それでも続行しますか？')) {
+                    return;
+                }
+            }
+            
             selectAdultLevel(currentAdultLevel);
             startAdultQuestions();
         });
