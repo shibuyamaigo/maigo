@@ -1099,16 +1099,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Adult mode event listeners
     document.getElementById('adult-btn').addEventListener('click', () => {
         changeScreen(adultScreen, 'images/title.jpg', 0.3);
+        // Initialize adult level selection
+        selectAdultLevel(1);
     });
 
     document.getElementById('adult-home-btn').addEventListener('click', () => {
-        changeScreen(titleScreen, 'images/title.jpg', 0.3);
+        location.reload();
     });
 
     // Adult level selection
     document.querySelectorAll('.adult-level-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             currentAdultLevel = parseInt(btn.getAttribute('data-level'));
+            selectAdultLevel(currentAdultLevel);
             startAdultQuestions();
         });
     });
@@ -1199,6 +1202,16 @@ document.addEventListener('DOMContentLoaded', () => {
         backToAdultLevels();
     }
 
+    function selectAdultLevel(level) {
+        // Remove active class from all adult level buttons
+        document.querySelectorAll('.adult-level-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Add active class to selected level
+        document.querySelector(`.adult-level-btn[data-level="${level}"]`).classList.add('active');
+    }
+
     function backToAdultLevels() {
         document.getElementById('adult-main').style.display = 'none';
         document.getElementById('level-selector-adult').style.display = 'block';
@@ -1211,10 +1224,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // FATE ROULETTE event listeners
     document.getElementById('fate-roulette-btn').addEventListener('click', () => {
         changeScreen(fateRouletteScreen, 'images/title.jpg', 0.4);
+        // Initialize fate level selection
+        selectFateLevel(1);
     });
 
     document.getElementById('fate-home-btn').addEventListener('click', () => {
-        changeScreen(titleScreen, 'images/title.jpg', 0.3);
+        location.reload();
     });
 
     // 参加者追加
@@ -1310,11 +1325,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function selectFateLevel(level) {
+        // Remove active class from all fate level buttons
         document.querySelectorAll('.fate-level-btn').forEach(btn => {
             btn.classList.remove('active');
         });
         
-        document.querySelector(`[data-level="${level}"]`).classList.add('active');
+        // Add active class to selected level
+        document.querySelector(`.fate-level-btn[data-level="${level}"]`).classList.add('active');
         fateGame.setLevel(level);
     }
 
