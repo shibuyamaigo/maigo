@@ -833,6 +833,49 @@ button#calc-btn {
     transform: scale(1.05);
 }
 
+.adult-level-btn.active {
+    border-color: #4CAF50;
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.8), rgba(56, 142, 60, 0.8));
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+    transform: scale(1.05);
+}
+
+.adult-level-btn[data-level="2"].active {
+    border-color: #FFC107;
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.8), rgba(245, 124, 0, 0.8));
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.6);
+}
+
+.adult-level-btn[data-level="3"].active {
+    border-color: #FF5722;
+    background: linear-gradient(135deg, rgba(255, 87, 34, 0.8), rgba(216, 67, 21, 0.8));
+    box-shadow: 0 0 20px rgba(255, 87, 34, 0.6);
+}
+
+.adult-level-btn[data-level="4"].active {
+    border-color: #DC143C;
+    background: linear-gradient(135deg, rgba(220, 20, 60, 0.8), rgba(139, 0, 0, 0.8));
+    box-shadow: 0 0 20px rgba(220, 20, 60, 0.6);
+}
+
+.adult-level-btn[data-level="5"].active {
+    border-color: #E91E63;
+    background: linear-gradient(135deg, rgba(233, 30, 99, 0.8), rgba(173, 20, 87, 0.8));
+    box-shadow: 0 0 20px rgba(233, 30, 99, 0.6);
+}
+
+.adult-level-btn[data-level="6"].active {
+    border-color: #8B0000;
+    background: linear-gradient(135deg, rgba(139, 0, 0, 0.8), rgba(80, 0, 0, 0.8));
+    box-shadow: 0 0 20px rgba(139, 0, 0, 0.6);
+    animation: danger-pulse-active 2s infinite;
+}
+
+@keyframes danger-pulse-active {
+    0%, 100% { box-shadow: 0 0 20px rgba(139, 0, 0, 0.6); }
+    50% { box-shadow: 0 0 30px rgba(139, 0, 0, 1), 0 0 40px rgba(139, 0, 0, 0.5); }
+}
+
 .adult-level-btn.danger {
     border-color: #DC143C;
     background: linear-gradient(135deg, rgba(40, 0, 0, 0.9), rgba(60, 20, 20, 0.9));
@@ -963,6 +1006,18 @@ button#calc-btn {
 .adult-control-btn.secondary:hover {
     background: linear-gradient(135deg, rgba(60, 60, 60, 0.9), rgba(80, 80, 80, 0.9));
     border-color: #AAA;
+}
+
+.adult-home-btn {
+    position: static !important;
+    margin: 20px auto 0 auto;
+    display: block;
+}
+
+.fate-home-btn {
+    position: static !important;
+    margin: 20px auto 0 auto;
+    display: block;
 }
 
 @media (max-width: 480px) {
@@ -1204,23 +1259,27 @@ button#calc-btn {
 
 .fate-level-btn.active {
     border-color: #ffd700;
-    background: linear-gradient(135deg, rgba(26, 35, 126, 0.9), rgba(57, 73, 171, 0.9));
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.8), rgba(56, 142, 60, 0.8));
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+    transform: scale(1.05);
 }
 
 .fate-level-btn[data-level="2"].active {
-    background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(245, 124, 0, 0.2));
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.8), rgba(245, 124, 0, 0.8));
     border-color: #ffc107;
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.6);
 }
 
 .fate-level-btn[data-level="3"].active {
-    background: linear-gradient(135deg, rgba(255, 87, 34, 0.2), rgba(216, 67, 21, 0.2));
+    background: linear-gradient(135deg, rgba(255, 87, 34, 0.8), rgba(216, 67, 21, 0.8));
     border-color: #ff5722;
+    box-shadow: 0 0 20px rgba(255, 87, 34, 0.6);
 }
 
 .fate-level-btn[data-level="4"].active {
-    background: linear-gradient(135deg, rgba(233, 30, 99, 0.2), rgba(173, 20, 87, 0.2));
+    background: linear-gradient(135deg, rgba(233, 30, 99, 0.8), rgba(173, 20, 87, 0.8));
     border-color: #e91e63;
+    box-shadow: 0 0 20px rgba(233, 30, 99, 0.6);
 }
 
 .level-emoji {
