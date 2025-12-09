@@ -1,118 +1,365 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Animal Fortune Data & Logic ---
-    const animalFortuneData = {
-        "1": {"animal": "チータ", "color": "イエロー"}, "2": {"animal": "たぬき", "color": "グリーン"}, "3": {"animal": "猿", "color": "レッド"}, "4": {"animal": "子守熊", "color": "オレンジ"}, "5": {"animal": "黒ひょう", "color": "ブラウン"}, "6": {"animal": "虎", "color": "ブラック"}, "7": {"animal": "チータ", "color": "ゴールド"}, "8": {"animal": "たぬき", "color": "シルバー"}, "9": {"animal": "猿", "color": "ブルー"}, "10": {"animal": "子守熊", "color": "パープル"},
-        "11": {"animal": "こじか", "color": "イエロー"}, "12": {"animal": "ゾウ", "color": "グリーン"}, "13": {"animal": "狼", "color": "レッド"}, "14": {"animal": "ひつじ", "color": "オレンジ"}, "15": {"animal": "猿", "color": "ブラウン"}, "16": {"animal": "子守熊", "color": "ブラック"}, "17": {"animal": "こじか", "color": "ゴールド"}, "18": {"animal": "ゾウ", "color": "シルバー"}, "19": {"animal": "狼", "color": "ブルー"}, "20": {"animal": "ひつじ", "color": "パープル"},
-        "21": {"animal": "ペガサス", "color": "イエロー"}, "22": {"animal": "ペガサス", "color": "グリーン"}, "23": {"animal": "ひつじ", "color": "レッド"}, "24": {"animal": "狼", "color": "オレンジ"}, "25": {"animal": "狼", "color": "ブラウン"}, "26": {"animal": "ひつじ", "color": "ブラック"}, "27": {"animal": "ペガサス", "color": "ゴールド"}, "28": {"animal": "ペガサス", "color": "シルバー"}, "29": {"animal": "ひつじ", "color": "ブルー"}, "30": {"animal": "狼", "color": "パープル"},
-        "31": {"animal": "ゾウ", "color": "イエロー"}, "32": {"animal": "こじか", "color": "グリーン"}, "33": {"animal": "子守熊", "color": "レッド"}, "34": {"animal": "猿", "color": "オレンジ"}, "35": {"animal": "ひつじ", "color": "ブラウン"}, "36": {"animal": "狼", "color": "ブラック"}, "37": {"animal": "ゾウ", "color": "ゴールド"}, "38": {"animal": "こじか", "color": "シルバー"}, "39": {"animal": "子守熊", "color": "ブルー"}, "40": {"animal": "猿", "color": "パープル"},
-        "41": {"animal": "たぬき", "color": "イエロー"}, "42": {"animal": "チータ", "color": "グリーン"}, "43": {"animal": "虎", "color": "レッド"}, "44": {"animal": "黒ひょう", "color": "オレンジ"}, "45": {"animal": "子守熊", "color": "ブラウン"}, "46": {"animal": "猿", "color": "ブラック"}, "47": {"animal": "たぬき", "color": "ゴールド"}, "48": {"animal": "チータ", "color": "シルバー"}, "49": {"animal": "虎", "color": "ブルー"}, "50": {"animal": "黒ひょう", "color": "パープル"},
-        "51": {"animal": "ライオン", "color": "イエロー"}, "52": {"animal": "ライオン", "color": "グリーン"}, "53": {"animal": "黒ひょう", "color": "レッド"}, "54": {"animal": "虎", "color": "オレンジ"}, "55": {"animal": "虎", "color": "ブラウン"}, "56": {"animal": "黒ひょう", "color": "ブラック"}, "57": {"animal": "ライオン", "color": "ゴールド"}, "58": {"animal": "ライオン", "color": "シルバー"}, "59": {"animal": "黒ひょう", "color": "ブルー"}, "60": {"animal": "虎", "color": "パープル"}
-    };
-    let baseNumberTable;
+    // --- Global Data ---
+    let cardFeaturesData = {};
+    let cardImplicationsData = {};
 
-    function isLeap(year) {
-        return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
-    }
-
-    function getMonthlyNumbers(year, janBase) {
-        const months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-        if (isLeap(year)) months[1] = 29;
-        let list = [];
-        let val = janBase;
-        for (let m = 0; m < 12; m++) {
-            let v = val % 60;
-            if (v === 0) v = 60;
-            list.push(v); 
-            val += months[m];
-        }
-        return list;
-    }
-
-    function generateTable(startYear, endYear) {
-        const table = {};
-        let currentBase = 17; // 1970年基準
-        
-        for (let y = 1970; y <= endYear; y++) {
-            table[y] = getMonthlyNumbers(y, currentBase);
-            let daysInYear = isLeap(y) ? 366 : 365;
-            currentBase = (currentBase + daysInYear) % 60;
-            if (currentBase === 0) currentBase = 60;
-        }
-        
-        currentBase = 17; 
-        for (let y = 1969; y >= startYear; y--) {
-            let daysInYear = isLeap(y) ? 366 : 365;
-            currentBase = (currentBase - (daysInYear % 60));
-            if (currentBase <= 0) currentBase += 60;
-            table[y] = getMonthlyNumbers(y, currentBase);
-        }
-        return table;
-    }
-
-    // --- ESSENCE JOURNEY Questions ---
+    // --- ESSENCE JOURNEY Questions (5 Main Levels x 3 Sub-stages) ---
     const questions = {
-        "1-1": ["理想のデートはどんな場所？", "小さな幸せを感じるのはどんな瞬間？", "最近ハマってることは何？", "お気に入りの食べ物と飲み物は？", "好きな映画のジャンルは？", "どんな音楽でリラックスする？", "どんな天気の日にデートしたい？", "好きな香水や匂いは？", "どんな場所でリラックスできる？", "最近買ったお気に入りのものは？"],
-        "1-2": ["ペットを飼うとしたら何がいい？", "得意料理は何？", "カラオケの十八番は？", "最近笑った面白い出来事は？", "変な夢見たことある？", "どんなカフェが好き？", "やってみたいスポーツは？", "どんな本や漫画にハマってる？", "休日は何してる？", "朝起きて最初にすることは？"],
-        "1-3": ["海と山どちらが好き？", "コーヒーと紅茶どっち？", "甘いものと辛いものどっち？", "映画館と家での鑑賞どっち？", "朝型？夜型？", "アウトドア？インドア？", "大勢の飲み会と少人数どっち？", "LINEと電話どっち？", "お酒飲む？好きなお酒は？", "最近新しく始めたことある？"],
-        "2-1": ["どんな人に惹かれる？", "子供の頃の夢と今の現実のギャップは？", "人間関係で一番大事にしてることは？", "自分の性格の良いところと悪いところは？", "友達の前と恋人の前で性格変わる？", "結婚って必要だと思う？", "理想の家族ってある？", "仕事で一番大事だと思うことは？", "どんな時に心が温まる？", "憧れる人っている？"],
-        "2-2": ["自分が一番カッコいいと思う瞬間は？", "一番リラックスできるのはいつ？", "これから絶対叶えたい夢は？", "友達に感謝した瞬間は？", "自分を変えたいと思う瞬間は？", "恋がしたくなるのはどんな時？", "家族の大切さを感じる瞬間は？", "人生楽しいと思える瞬間は？", "大金があったら何に使う？", "人生で一番大切なものは何？"],
-        "2-3": ["昔の自分は今の自分をどう思うと思う？", "人生を変えた人はいる？", "人生のターニングポイントはいつ？", "今一番の悩みは？", "性格で一番直したいところは？", "人生で一番後悔してることは？", "今の環境から逃げたいと思うことある？", "価値観がガラッと変わった出来事は？", "将来に不安感じることある？", "本当の自分を分かってくれる人はいる？"],
-        "3-1": ["誰にも言えない秘密ある？", "人には見せない意外な一面は？", "自分の一番やばい欠点は？", "人生で一番恥ずかしかった経験は？", "初恋の思い出は？", "今まで一番ドキドキした恋愛は？", "恋愛での大失敗は？", "元カレ/元カノ何人いる？", "本音隠す時ってどんな時？", "自分偽る時ってある？"],
-        "3-2": ["人を裏切ってしまったことある？", "誰かのものを盗んだことある？", "嘘ついて得したことある？", "人に言えない悪いことしたことある？", "ずる賢い方法で楽したことある？", "誰かを意地悪したことある？", "約束破ったことある？", "誰かを騙したことある？", "人のせいにしたことある？", "バレなければいいと思ってやったことある？"],
-        "3-3": ["人生で一番やばかった経験は？", "忘れられない傷ついた言葉は？", "自分の心の闇認めてる？", "誰にも理解されないって感じることある？", "自分が嫌いになることある？", "やり直したい黒歴史は？", "死にたいと思ったことある？", "絶対許せないことって何？", "罪悪感で苦しんでることある？", "本当の自分見せるの怖い？"],
-        "4-1": ["酔っ払うとどんな自分が顔を出す？", "一人の時の自分と人といる時の自分、どっちが本物？", "自分の中の一番汚い部分って何？", "誰にも見せたくない自分の一面は？", "嫌いな人の真似してしまったことある？", "自分が親になったら絶対やりそうな嫌なこと", "自分の中の悪魔が囁く時ってある？", "完全に一人だったらやってしまいそうなこと", "自分が一番恐れてることって何？", "抑圧してる感情ってある？"],
-        "4-2": ["酔った時に本性が出た経験ある？", "無意識に親と同じことしてしまった経験", "夢の中の自分はどんなことしてる？", "怒りで我を忘れたことある？", "誰かを憎んだ経験ある？", "自分を完全に失った瞬間ってある？", "心の奥で望んでるけど絶対言えないこと", "自分の影の部分と向き合ったことある？", "無意識に人を傷つけてしまった経験", "抑圧された記憶が蘇ったことある？"],
-        "4-3": ["自分の中の破壊衝動を感じたことある？", "誰かに依存してしまった経験ある？", "完全に理性を失った瞬間ってある？", "自分の醜い嫉妬心と向き合ったことある？", "無意識の偏見に気づいたことある？", "自分が加害者になった経験ある？", "トラウマが人格に与えた影響を感じる？", "自分の中の子供っぽい部分が暴走したことある？", "コントロールできない衝動ってある？", "自分の深層心理が怖いと思ったことある？"],
-        "5-1": ["触れられると嬉しい場所は？", "好きなスキンシップは？", "理想のキスってどんな感じ？", "好きな人の前で緊張する時は？", "抱きしめられたい時ってある？", "言われて嬉しい甘い言葉は？", "耳元で囁かれたい言葉は？", "二人きりの時何したい？", "どんな匂いにドキッとする？", "触りたくなる瞬間ってある？"],
-        "5-2": ["愛を感じる瞬間っていつ？", "一緒に叶えたい夢ってある？", "全部話したくなる時ってある？", "どんな未来想像してる？", "手繋ぎたくなる場所は？", "恋しくなる瞬間ってある？", "どんな約束したい？", "理想の夜の過ごし方は？", "打ち明けたい秘密ある？", "伝えたい愛の言葉は？"],
-        "5-3": ["ロマンティックな夜ってどんなの？", "見つめ合いたくなる瞬間は？", "行きたい秘密の場所は？", "甘えたくなる時ってある？", "永遠に刻みたい時間は？", "心に響く声ってある？", "理想の旅行先は？", "許されたい瞬間ってある？", "愛の証って何だと思う？", "完全に一つになりたい時は？"],
-        "6-1": ["最近いつエッチなことした？（一人含む）", "どんな服着てる人に興奮する？", "エッチな夢見たことある？", "どんな音でムラムラする？", "見ただけで興奮する体の部位は？", "どんな場所でエッチしてみたい？", "どんな匂いでエッチな気分になる？", "どんな仕草で興奮する？", "一番エッチな夜の過ごし方は？", "朝から興奮したことある？"],
-        "6-2": ["首筋キスされてゾクッとした経験ある？", "筋肉にドキッとした経験ある？", "チラ見えでムラムラした経験ある？", "腰のラインに釘付けになった経験ある？", "太ももがセクシーに見えた経験ある？", "キスしたくてたまらなくなった経験ある？", "どんなプレイの経験ある？", "コスプレで興奮した経験ある？", "一番興奮したシチュエーションは？", "ロールプレイの経験ある？"],
-        "6-3": ["縛りプレイの経験ある？", "コスプレエッチの経験ある？", "おもちゃ使ったプレイの経験ある？", "目隠しプレイの経験ある？", "痛いプレイの経験ある？", "アダルト系のもの見た経験ある？", "エッチの時何考えてる？", "一番興奮したのはどんな時？", "ドラッグ的な快感感じた経験ある？", "禁断の関係の経験ある？"]
+        "1-1": [
+            "理想のデートはどんな場所？",
+            "小さな幸せを感じるのはどんな瞬間？",
+            "最近ハマってることは何？",
+            "お気に入りの食べ物と飲み物は？",
+            "好きな映画のジャンルは？",
+            "どんな音楽でリラックスする？",
+            "どんな天気の日にデートしたい？",
+            "好きな香水や匂いは？",
+            "どんな場所でリラックスできる？",
+            "最近買ったお気に入りのものは？"
+        ],
+        "1-2": [
+            "ペットを飼うとしたら何がいい？",
+            "得意料理は何？",
+            "カラオケの十八番は？",
+            "最近笑った面白い出来事は？",
+            "変な夢見たことある？",
+            "どんなカフェが好き？",
+            "やってみたいスポーツは？",
+            "どんな本や漫画にハマってる？",
+            "休日は何してる？",
+            "朝起きて最初にすることは？"
+        ],
+        "1-3": [
+            "海と山どちらが好き？",
+            "コーヒーと紅茶どっち？",
+            "甘いものと辛いものどっち？",
+            "映画館と家での鑑賞どっち？",
+            "朝型？夜型？",
+            "アウトドア？インドア？",
+            "大勢の飲み会と少人数どっち？",
+            "LINEと電話どっち？",
+            "お酒飲む？好きなお酒は？",
+            "最近新しく始めたことある？"
+        ],
+        "2-1": [
+            "どんな人に惹かれる？",
+            "子供の頃の夢と今の現実のギャップは？",
+            "人間関係で一番大事にしてることは？",
+            "自分の性格の良いところと悪いところは？",
+            "友達の前と恋人の前で性格変わる？",
+            "結婚って必要だと思う？",
+            "理想の家族ってある？",
+            "仕事で一番大事だと思うことは？",
+            "どんな時に心が温まる？",
+            "憧れる人っている？"
+        ],
+        "2-2": [
+            "自分が一番カッコいいと思う瞬間は？",
+            "一番リラックスできるのはいつ？",
+            "これから絶対叶えたい夢は？",
+            "友達に感謝した瞬間は？",
+            "自分を変えたいと思う瞬間は？",
+            "恋がしたくなるのはどんな時？",
+            "家族の大切さを感じる瞬間は？",
+            "人生楽しいと思える瞬間は？",
+            "大金があったら何に使う？",
+            "人生で一番大切なものは何？"
+        ],
+        "2-3": [
+            "昔の自分は今の自分をどう思うと思う？",
+            "人生を変えた人はいる？",
+            "人生のターニングポイントはいつ？",
+            "今一番の悩みは？",
+            "性格で一番直したいところは？",
+            "人生で一番後悔してることは？",
+            "今の環境から逃げたいと思うことある？",
+            "価値観がガラッと変わった出来事は？",
+            "将来に不安感じることある？",
+            "本当の自分を分かってくれる人はいる？"
+        ],
+        "3-1": [
+            "誰にも言えない秘密ある？",
+            "人には見せない意外な一面は？",
+            "自分の一番やばい欠点は？",
+            "人生で一番恥ずかしかった経験は？",
+            "初恋の思い出は？",
+            "今まで一番ドキドキした恋愛は？",
+            "恋愛での大失敗は？",
+            "元カレ/元カノ何人いる？",
+            "本音隠す時ってどんな時？",
+            "自分偽る時ってある？"
+        ],
+        "3-2": [
+            "人を裏切ってしまったことある？",
+            "誰かのものを盗んだことある？",
+            "嘘ついて得したことある？",
+            "人に言えない悪いことしたことある？",
+            "ずる賢い方法で楽したことある？",
+            "誰かを意地悪したことある？",
+            "約束破ったことある？",
+            "誰かを騙したことある？",
+            "人のせいにしたことある？",
+            "バレなければいいと思ってやったことある？"
+        ],
+        "3-3": [
+            "人生で一番やばかった経験は？",
+            "忘れられない傷ついた言葉は？",
+            "自分の心の闇認めてる？",
+            "誰にも理解されないって感じることある？",
+            "自分が嫌いになることある？",
+            "やり直したい黒歴史は？",
+            "死にたいと思ったことある？",
+            "絶対許せないことって何？",
+            "罪悪感で苦しんでることある？",
+            "本当の自分見せるの怖い？"
+        ],
+        "4-1": [
+            "酔っ払うとどんな自分が顔を出す？",
+            "一人の時の自分と人といる時の自分、どっちが本物？",
+            "自分の中の一番汚い部分って何？",
+            "誰にも見せたくない自分の一面は？",
+            "嫌いな人の真似してしまったことある？",
+            "自分が親になったら絶対やりそうな嫌なこと",
+            "自分の中の悪魔が囁く時ってある？",
+            "完全に一人だったらやってしまいそうなこと",
+            "自分が一番恐れてることって何？",
+            "抑圧してる感情ってある？"
+        ],
+        "4-2": [
+            "酔った時に本性が出た経験ある？",
+            "無意識に親と同じことしてしまった経験",
+            "夢の中の自分はどんなことしてる？",
+            "怒りで我を忘れたことある？",
+            "誰かを憎んだ経験ある？",
+            "自分を完全に失った瞬間ってある？",
+            "心の奥で望んでるけど絶対言えないこと",
+            "自分の影の部分と向き合ったことある？",
+            "無意識に人を傷つけてしまった経験",
+            "抑圧された記憶が蘇ったことある？"
+        ],
+        "4-3": [
+            "自分の中の破壊衝動を感じたことある？",
+            "誰かに依存してしまった経験ある？",
+            "完全に理性を失った瞬間ってある？",
+            "自分の醜い嫉妬心と向き合ったことある？",
+            "無意識の偏見に気づいたことある？",
+            "自分が加害者になった経験ある？",
+            "トラウマが人格に与えた影響を感じる？",
+            "自分の中の子供っぽい部分が暴走したことある？",
+            "コントロールできない衝動ってある？",
+            "自分の深層心理が怖いと思ったことある？"
+        ],
+        "5-1": [
+            "触れられると嬉しい場所は？",
+            "好きなスキンシップは？",
+            "理想のキスってどんな感じ？",
+            "好きな人の前で緊張する時は？",
+            "抱きしめられたい時ってある？",
+            "言われて嬉しい甘い言葉は？",
+            "耳元で囁かれたい言葉は？",
+            "二人きりの時何したい？",
+            "どんな匂いにドキッとする？",
+            "触りたくなる瞬間ってある？"
+        ],
+        "5-2": [
+            "愛を感じる瞬間っていつ？",
+            "一緒に叶えたい夢ってある？",
+            "全部話したくなる時ってある？",
+            "どんな未来想像してる？",
+            "手繋ぎたくなる場所は？",
+            "恋しくなる瞬間ってある？",
+            "どんな約束したい？",
+            "理想の夜の過ごし方は？",
+            "打ち明けたい秘密ある？",
+            "伝えたい愛の言葉は？"
+        ],
+        "5-3": [
+            "ロマンティックな夜ってどんなの？",
+            "見つめ合いたくなる瞬間は？",
+            "行きたい秘密の場所は？",
+            "甘えたくなる時ってある？",
+            "永遠に刻みたい時間は？",
+            "心に響く声ってある？",
+            "理想の旅行先は？",
+            "許されたい瞬間ってある？",
+            "愛の証って何だと思う？",
+            "完全に一つになりたい時は？"
+        ],
+        "6-1": [
+            "最近いつエッチなことした？（一人含む）",
+            "どんな服着てる人に興奮する？",
+            "エッチな夢見たことある？",
+            "どんな音でムラムラする？",
+            "見ただけで興奮する体の部位は？",
+            "どんな場所でエッチしてみたい？",
+            "どんな匂いでエッチな気分になる？",
+            "どんな仕草で興奮する？",
+            "一番エッチな夜の過ごし方は？",
+            "朝から興奮したことある？"
+        ],
+        "6-2": [
+            "首筋キスされてゾクッとした経験ある？",
+            "筋肉にドキッとした経験ある？",
+            "チラ見えでムラムラした経験ある？",
+            "腰のラインに釘付けになった経験ある？",
+            "太ももがセクシーに見えた経験ある？",
+            "キスしたくてたまらなくなった経験ある？",
+            "どんなプレイの経験ある？",
+            "コスプレで興奮した経験ある？",
+            "一番興奮したシチュエーションは？",
+            "ロールプレイの経験ある？"
+        ],
+        "6-3": [
+            "縛りプレイの経験ある？",
+            "コスプレエッチの経験ある？",
+            "おもちゃ使ったプレイの経験ある？",
+            "目隠しプレイの経験ある？",
+            "痛いプレイの経験ある？",
+            "アダルト系のもの見た経験ある？",
+            "エッチの時何考えてる？",
+            "一番興奮したのはどんな時？",
+            "ドラッグ的な快感感じた経験ある？",
+            "禁断の関係の経験ある？"
+        ]
     };
+
     let currentLevel = 1;
     let currentSubLevel = 1;
 
+    // --- Data Loading ---
+    async function loadCardData() {
+        try {
+            const [featuresRes, implicationsRes] = await Promise.all([
+                fetch('カードの特徴.txt'),
+                fetch('カードの暗示.txt')
+            ]);
+
+            if (!featuresRes.ok || !implicationsRes.ok) {
+                throw new Error('Failed to load card data files.');
+            }
+
+            const featuresText = await featuresRes.text();
+            const implicationsText = await implicationsRes.text();
+
+            cardFeaturesData = parseFeaturesText(featuresText);
+            cardImplicationsData = parseImplicationsText(implicationsText);
+            
+        } catch (error) {
+            console.error("Error loading card data:", error);
+        }
+    }
+
+    function parseFeaturesText(text) {
+        const data = {};
+        // Split by newline and "## " to handle different line endings
+        const cardBlocks = text.split(/\r?\n## /);
+        cardBlocks.forEach(block => {
+            if (block.trim() === '' || !block.includes('・')) return;
+            
+            const lines = block.split(/\r?\n/);
+            const titleLine = lines.find(l => l.includes('・'));
+            if (!titleLine) return;
+
+            const cardId = parseInt(titleLine.split('・')[0], 10);
+
+            if (!isNaN(cardId)) {
+                data[cardId] = {
+                    theme: lines.find(l => l.startsWith('### テーマ'))?.replace('### テーマ', '').trim() || '',
+                    traits: lines.find(l => l.startsWith('### 特徴'))?.replace('### 特徴', '').trim() || '',
+                    advice: lines.find(l => l.startsWith('### アドバイス'))?.replace('### アドバイス', '').trim() || ''
+                };
+            }
+        });
+        return data;
+    }
+
+    function parseImplicationsText(text) {
+        const data = {};
+        // Split by newline and "## "
+        const cardBlocks = text.split(/\r?\n## /);
+        cardBlocks.forEach(block => {
+            if (block.trim() === '' || !block.startsWith('CARD')) return;
+
+            const lines = block.split(/\r?\n/);
+            const titleLine = lines[0];
+            const cardId = parseInt(titleLine.replace('CARD', '').trim(), 10);
+
+            if (!isNaN(cardId)) {
+                data[cardId] = {
+                    upright: lines.find(l => l.startsWith('### 正位置'))?.replace('### 正位置', '').trim() || '',
+                    reversed: lines.find(l => l.startsWith('### 逆位置'))?.replace('### 逆位置', '').trim() || ''
+                };
+            }
+        });
+        return data;
+    }
+
     // --- Elements ---
     const titleScreen = document.getElementById('title-screen');
+    const startBtn = document.getElementById('start-btn');
     const inputScreen = document.getElementById('input-screen');
     const resultScreen = document.getElementById('result-screen');
     const calcBtn = document.getElementById('calc-btn');
     const appBg = document.getElementById('app-background');
+
+    // Inputs
     const yearSelect = document.getElementById('year');
     const monthSelect = document.getElementById('month');
     const daySelect = document.getElementById('day');
     const ageSelect = document.getElementById('age');
+
+    // BY View
     const bySection = document.getElementById('by-section');
     const byImage = document.getElementById('by-image');
     const byName = document.getElementById('by-name');
     const byTheme = document.getElementById('by-theme');
+
+    // TY View
     const tySection = document.getElementById('ty-section');
+    
+    // New thumbnail elements
     const thumbMinus2 = document.getElementById('thumb-minus2');
     const thumbMinus1 = document.getElementById('thumb-minus1');
     const thumbCurrent = document.getElementById('thumb-current');
     const thumbPlus1 = document.getElementById('thumb-plus1');
     const thumbPlus2 = document.getElementById('thumb-plus2');
+    
+    // Main card elements
     const mainTyImage = document.getElementById('main-ty-image');
     const mainTyLabel = document.getElementById('main-ty-label');
     const mainTyName = document.getElementById('main-ty-name');
     const mainTyTheme = document.getElementById('main-ty-theme');
+    
+    // Navigation buttons
     const toTyBtn = document.getElementById('to-ty-btn');
     const toByBtn = document.getElementById('to-by-btn');
     const homeBtn = document.getElementById('home-btn');
     const homeBtnTy = document.getElementById('home-btn-ty');
     const prevYearBtn = document.getElementById('prev-year-btn');
     const nextYearBtn = document.getElementById('next-year-btn');
+    
+    // Global variables for extended year navigation
+    let currentAge = 30;
+    let birthYearNum = 0;
+    let displayAge = 30; // 表示中の年齢（1歳ずつ変更）
+    let currentCardIndex = 0; // 表示中のカード番号（0-21で順番移動）
+    let displayMode = 'age'; // 'age' or 'card'
+    
+    // TY Modal elements
     const cardModal = document.getElementById('card-modal');
     const closeModal = document.getElementById('close-modal');
     const modalCardImage = document.getElementById('modal-card-image');
     const modalCardName = document.getElementById('modal-card-name');
     const modalCardTheme = document.getElementById('modal-card-theme');
+    
+    // Birth Card Modal elements
     const birthCardModal = document.getElementById('birth-card-modal');
     const closeBirthModal = document.getElementById('close-birth-modal');
     const birthModalCardImage = document.getElementById('birth-modal-card-image');
     const birthModalCardName = document.getElementById('birth-modal-card-name');
     const birthModalCardTheme = document.getElementById('birth-modal-card-theme');
+    
+    // QA Screen elements
     const qaScreen = document.getElementById('qa-screen');
     const calculatorBtn = document.getElementById('calculator-btn');
     const essenceBtn = document.getElementById('essence-btn');
@@ -123,7 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const backToLevelsBtn = document.getElementById('back-to-levels-btn');
     const qaHomeBtn = document.getElementById('qa-home-btn');
     
-    // Animal Fortune Screen elements
+    // Shichusuimei Screen elements
     const shichusuimeiBtn = document.getElementById('shichusuimei-btn');
     const shichusuimeiScreen = document.getElementById('shichusuimei-screen');
     const shichusuimeiInput = document.getElementById('shichusuimei-input');
@@ -135,19 +382,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const shichusuimeiBackBtn = document.getElementById('shichusuimei-back-btn');
     const shichusuimeiHomeBtn = document.getElementById('shichusuimei-home-btn');
 
-    // Global calculation variables
-    let currentAge = 30;
-    let birthYearNum = 0;
-    let displayAge = 30;
-    let currentCardIndex = 0;
-    let displayMode = 'age';
-
     // --- Initialization ---
-    function initializeApp() {
+    async function initializeApp() {
         initSelects();
-        baseNumberTable = generateTable(1925, 2025); // Generate table on load
+        // Data is now loaded from data.js
     }
 
+    // セレクトボックスの選択肢生成
     function initSelects() {
         const currentYear = new Date().getFullYear();
         const selects = [
@@ -171,8 +412,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
+    initializeApp();
+    
     // --- Navigation Logic ---
+
+    // Entrance button events
+    calculatorBtn.addEventListener('click', () => {
+        changeScreen(inputScreen, 'images/back.jpg', 0.6);
+    });
+    
+    essenceBtn.addEventListener('click', () => {
+        changeScreen(qaScreen, 'images/qaback1.jpg', 0.7);
+    });
+
+    shichusuimeiBtn.addEventListener('click', () => {
+        changeScreen(shichusuimeiScreen, 'images/journey2.jpg', 0.7);
+    });
+
     function changeScreen(targetScreen, bgImage, bgOpacity) {
         titleScreen.style.opacity = '0';
         setTimeout(() => {
@@ -183,60 +439,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
     }
 
-    function goToHome() {
-        location.reload();
-    }
+    // Input -> Result
+    calcBtn.addEventListener('click', () => {
+        const y = parseInt(yearSelect.value);
+        const m = parseInt(monthSelect.value);
+        const d = parseInt(daySelect.value);
+        const age = parseInt(ageSelect.value);
 
-    // --- Event Listeners ---
-    calculatorBtn.addEventListener('click', () => changeScreen(inputScreen, 'images/back.jpg', 0.6));
-    essenceBtn.addEventListener('click', () => changeScreen(qaScreen, 'images/qaback1.jpg', 0.7));
-    shichusuimeiBtn.addEventListener('click', () => changeScreen(shichusuimeiScreen, 'images/journey2.jpg', 0.7));
-    
-    homeBtn.addEventListener('click', goToHome);
-    homeBtnTy.addEventListener('click', goToHome);
-    qaHomeBtn.addEventListener('click', goToHome);
-    shichusuimeiHomeBtn.addEventListener('click', goToHome);
+        const byNum = calculateBY(y, m, d);
+        showResult(byNum, age);
+    });
 
-    // --- Animal Fortune Mode Logic ---
+    // --- Shichusuimei Logic ---
     shichusuimeiCalcBtn.addEventListener('click', () => {
         const y = parseInt(sYearSelect.value);
         const m = parseInt(sMonthSelect.value);
         const d = parseInt(sDaySelect.value);
-        
-        if (!baseNumberTable) {
-            console.error("Calculation table not ready.");
-            return;
-        }
-
-        const baseNumber = baseNumberTable[y][m - 1];
-        let finalNumber = baseNumber + d;
-
-        if (finalNumber > 60) {
-            finalNumber -= 60;
-        }
-
-        const result = animalFortuneData[finalNumber];
-
-        if (result) {
-            const animalInfo = ANIMAL_DATA[result.animal] || {};
-            const groupInfo = GROUP_DATA[animalInfo.group] || {};
-
-            document.getElementById('animal-main-name').textContent = `${result.color}の${result.animal}`;
-            document.getElementById('animal-main-description').textContent = animalInfo.description || '説明が見つかりません。';
-            document.getElementById('animal-main-icon').textContent = animalInfo.icon || '❓';
-            
-            const groupBadge = document.getElementById('animal-group-badge');
-            groupBadge.textContent = groupInfo.name || '';
-            groupBadge.style.display = groupInfo.name ? 'inline-block' : 'none';
-
-            const groupDetails = document.getElementById('group-details');
-            document.getElementById('group-name').textContent = groupInfo.name || '';
-            document.getElementById('group-description').textContent = groupInfo.description || '';
-            groupDetails.style.display = groupInfo.name ? 'block' : 'none';
-
-            shichusuimeiInput.style.display = 'none';
-            shichusuimeiResult.style.display = 'block';
-        }
+        calculateAndShowShichusuimei(y, m, d);
     });
 
     shichusuimeiBackBtn.addEventListener('click', () => {
@@ -244,137 +463,306 @@ document.addEventListener('DOMContentLoaded', () => {
         shichusuimeiInput.style.display = 'flex';
     });
 
-    // --- Personal Arcana Logic ---
-    calcBtn.addEventListener('click', () => {
-        const y = parseInt(yearSelect.value);
-        const m = parseInt(monthSelect.value);
-        const d = parseInt(daySelect.value);
-        const age = parseInt(ageSelect.value);
-        const byNum = calculateBY(y, m, d);
-        showResult(byNum, age);
-    });
+    function calculateAndShowShichusuimei(y, m, d) {
+        const nenchu = getNenchu(y, m, d);
+        const gekichu = getGekichu(y, m, d);
+        const nichu = getNichu(y, m, d);
 
+        updateShichusuimeiCard('surface', nenchu);
+        updateShichusuimeiCard('hope', gekichu);
+        updateShichusuimeiCard('essence', nichu);
+        updateShichusuimeiCard('hidden', nichu); // 隠れは本質と同じものを表示
+
+        shichusuimeiInput.style.display = 'none';
+        shichusuimeiResult.style.display = 'block';
+    }
+
+    function updateShichusuimeiCard(type, kanshiIndex) {
+        const kanshi = KANSHI_DATA[kanshiIndex];
+        document.getElementById(`result-${type}-name`).textContent = kanshi.name;
+        document.getElementById(`result-${type}-animal`).textContent = kanshi.animal;
+    }
+
+    // --- 四柱推命 干支計算関数 ---
+    function getNenchu(year, month, day) {
+        // 節月を考慮し、立春(2/4頃)より前なら前年扱い
+        const isPreviousYear = month === 1 || (month === 2 && day < SETSUIRI_DATA[2]);
+        const targetYear = isPreviousYear ? year - 1 : year;
+        // (targetYear - 4) % 60 でも良いが、基準年を明確にする
+        // 1924年が甲子(インデックス0)
+        let index = (targetYear - 1924) % 60;
+        return index < 0 ? index + 60 : index;
+    }
+
+    function getGekichu(year, month, day) {
+        // 節入り日より前なら前月扱い
+        const targetMonth = day < SETSUIRI_DATA[month] ? month - 1 : month;
+        const adjustedMonth = targetMonth === 0 ? 12 : targetMonth;
+
+        const nenkanIndex = JIKKAN.indexOf(KANSHI_DATA[getNenchu(year, month, day)].name[0]);
+        
+        // 月干支の開始インデックス (年の十干ごと)
+        const monthStartIndex = [2, 4, 6, 8, 10, 0, 2, 4, 6, 8];
+        const gekkanBase = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1]; // 寅月(2月)からのインデックス
+        
+        let gekkanIndex = ( (nenkanIndex % 5) * 2 + gekkanBase[adjustedMonth-1] ) % 10;
+
+        // 月の十二支は固定 (寅月から始まる)
+        const junishiIndex = (adjustedMonth + 1) % 12;
+
+        // 干支インデックスを探索
+        const gekkan = JIKKAN[gekkanIndex];
+        const junishi = JUNISHI[junishiIndex];
+        return KANSHI_DATA.findIndex(k => k.name === gekkan + junishi);
+    }
+
+    function getNichu(year, month, day) {
+        // 1900年1月0日を基準とするユリウス通日もどき
+        if (month <= 2) {
+            year--;
+            month += 12;
+        }
+        const dayCount = Math.floor(365.25 * year) + Math.floor(year / 400) - Math.floor(year / 100) + Math.floor(30.6 * (month + 1)) + day - 428;
+        // 1924/1/1が甲子(0)から44番目「戊戌」
+        const index = (dayCount + 44) % 60;
+        return index < 0 ? index + 60 : index;
+    }
+
+
+    // --- Calculation Logic (Personal Arcana) ---
     function sumDigits(num) {
         return String(num).split('').reduce((acc, curr) => acc + parseInt(curr), 0);
     }
 
     function calculateBY(y, m, d) {
-        let sum = String(y).split('').reduce((s, n) => s + parseInt(n), 0) + m + d;
-        while (sum > 22) {
-            sum = sumDigits(sum);
+        let sum = 0;
+        const allDigits = (String(y) + String(m) + String(d)).split('');
+        allDigits.forEach(n => sum += parseInt(n));
+
+        if (sum === 22) return 0;
+        if (sum >= 3 && sum <= 21) return sum;
+        
+        let finalSum = sumDigits(sum);
+        if (finalSum === 22) return 0;
+        while (finalSum > 21) {
+            finalSum = sumDigits(finalSum);
         }
-        return sum === 22 ? 0 : sum;
+        return finalSum;
     }
 
     function calculateTY(age, byNum) {
-        return (byNum + age) % 22;
+        const sum = byNum + age;
+        return sum % 22;
     }
 
+    // --- Display Logic ---
     function getCardData(num) {
         return tarotData.find(c => c.id === num) || tarotData[0];
     }
 
     function showResult(byNum, age) {
+        // Store global values
         currentAge = age;
         birthYearNum = byNum;
+        
+        // Update BY
         const byCard = getCardData(byNum);
         byImage.src = `images/${byCard.file}`;
         byName.textContent = byCard.name;
         byTheme.textContent = byCard.theme;
+        
+        // BYカードにクリックイベント追加（Birth Card用モーダル）
         byImage.onclick = () => showBirthCardModal(byCard.id);
-        displayAge = age;
-        currentCardIndex = calculateTY(age, birthYearNum);
-        displayMode = 'age';
+
+        // TY表示の初期化
+        displayAge = age; // 表示年齢を初期化
+        currentCardIndex = calculateTY(age, birthYearNum); // 計算されたカードから開始
+        displayMode = 'age'; // 年齢モードで開始
+        
+        // Update TY
         updateTYDisplay();
-        changeScreen(resultScreen, appBg.style.backgroundImage.slice(5, -2), 1);
+
+        // Transition
+        inputScreen.style.opacity = '0';
+        setTimeout(() => {
+            inputScreen.classList.remove('active');
+            resultScreen.classList.add('active');
+            appBg.style.opacity = '1'; // 背景MAX
+        }, 500);
     }
     
     function updateTYDisplay() {
         if (displayMode === 'age') {
-            const cards = [-2, -1, 0, 1, 2].map(offset => calculateTY(displayAge + offset, birthYearNum));
-            setupThumbnailsAndMain(cards[0], cards[1], cards[2], cards[3], cards[4], displayAge);
+            // 年齢ベースの表示
+            const ty_2 = calculateTY(displayAge - 2, birthYearNum);
+            const ty_1 = calculateTY(displayAge - 1, birthYearNum);
+            const ty0 = calculateTY(displayAge, birthYearNum);
+            const ty1 = calculateTY(displayAge + 1, birthYearNum);
+            const ty2 = calculateTY(displayAge + 2, birthYearNum);
+            
+            setupThumbnailsAndMain(ty_2, ty_1, ty0, ty1, ty2, displayAge);
         } else {
-            const cards = [-2, -1, 0, 1, 2].map(offset => Math.min(21, Math.max(0, currentCardIndex + offset)));
-            setupThumbnailsCard(cards[0], cards[1], cards[2], cards[3], cards[4]);
+            // カード番号ベースの表示
+            const card_2 = Math.max(0, currentCardIndex - 2);
+            const card_1 = Math.max(0, currentCardIndex - 1);
+            const card0 = currentCardIndex;
+            const card1 = Math.min(21, currentCardIndex + 1);
+            const card2 = Math.min(21, currentCardIndex + 2);
+            
+            setupThumbnailsCard(card_2, card_1, card0, card1, card2);
         }
     }
     
     function setupThumbnailsCard(card_2, card_1, card0, card1, card2) {
-        const data = [
-            { el: thumbMinus2, num: card_2 }, { el: thumbMinus1, num: card_1 },
-            { el: thumbCurrent, num: card0 }, { el: thumbPlus1, num: card1 },
-            { el: thumbPlus2, num: card2 }
+        const thumbnailData = [
+            { element: thumbMinus2, cardNum: card_2, cardData: getCardData(card_2) },
+            { element: thumbMinus1, cardNum: card_1, cardData: getCardData(card_1) },
+            { element: thumbCurrent, cardNum: card0, cardData: getCardData(card0) },
+            { element: thumbPlus1, cardNum: card1, cardData: getCardData(card1) },
+            { element: thumbPlus2, cardNum: card2, cardData: getCardData(card2) }
         ];
-        data.forEach(item => {
-            const cardData = getCardData(item.num);
-            item.el.querySelector('img').src = `images/${cardData.file}`;
-            item.el.querySelector('span').textContent = String(item.num).padStart(2, '0');
-            item.el.classList.remove('active');
+        
+        thumbnailData.forEach((item, index) => {
+            const img = item.element.querySelector('img');
+            const span = item.element.querySelector('span');
+            
+            img.src = `images/${item.cardData.file}`;
+            span.textContent = String(item.cardNum).padStart(2, '0');
+            
+            // アクティブ状態をリセット
+            item.element.classList.remove('active');
+            
+            // 中央を常にアクティブ設定
+            if (index === 2) {
+                item.element.classList.add('active');
+                
+                // メインカードも更新
+                mainTyImage.src = `images/${item.cardData.file}`;
+                mainTyLabel.textContent = `Card ${String(item.cardNum).padStart(2, '0')}`;
+                mainTyName.textContent = item.cardData.name;
+                mainTyTheme.textContent = item.cardData.theme;
+                
+                // メインカードにクリックイベント
+                mainTyImage.onclick = () => showCardModal(item.cardData.id);
+            }
         });
-        thumbCurrent.classList.add('active');
-        const mainCardData = getCardData(card0);
-        mainTyImage.src = `images/${mainCardData.file}`;
-        mainTyLabel.textContent = `Card ${String(card0).padStart(2, '0')}`;
-        mainTyName.textContent = mainCardData.name;
-        mainTyTheme.textContent = mainCardData.theme;
-        mainTyImage.onclick = () => showCardModal(mainCardData.id);
     }
     
     function setupThumbnailsAndMain(ty_2, ty_1, ty0, ty1, ty2, baseAge) {
-        const data = [
-            { el: thumbMinus2, age: baseAge - 2, card: getCardData(ty_2) },
-            { el: thumbMinus1, age: baseAge - 1, card: getCardData(ty_1) },
-            { el: thumbCurrent, age: baseAge, card: getCardData(ty0) },
-            { el: thumbPlus1, age: baseAge + 1, card: getCardData(ty1) },
-            { el: thumbPlus2, age: baseAge + 2, card: getCardData(ty2) }
+        // サムネイル画像と年齢を更新
+        const thumbnailData = [
+            { element: thumbMinus2, age: baseAge - 2, cardData: getCardData(ty_2) },
+            { element: thumbMinus1, age: baseAge - 1, cardData: getCardData(ty_1) },
+            { element: thumbCurrent, age: baseAge, cardData: getCardData(ty0) },
+            { element: thumbPlus1, age: baseAge + 1, cardData: getCardData(ty1) },
+            { element: thumbPlus2, age: baseAge + 2, cardData: getCardData(ty2) }
         ];
-        data.forEach(item => {
-            item.el.querySelector('img').src = `images/${item.card.file}`;
-            item.el.querySelector('span').textContent = `${item.age}歳`;
-            item.el.classList.remove('active');
+        
+        thumbnailData.forEach((item, index) => {
+            const img = item.element.querySelector('img');
+            const span = item.element.querySelector('span');
+            
+            img.src = `images/${item.cardData.file}`;
+            span.textContent = `${item.age}歳`;
+            
+            // アクティブ状態をリセット
+            item.element.classList.remove('active');
+            
+            // 中央を常にアクティブ設定
+            if (index === 2) {
+                item.element.classList.add('active');
+                
+                // メインカードも更新 - 年齢とカード番号の両方を表示
+                mainTyImage.src = `images/${item.cardData.file}`;
+                const currentCard = calculateTY(displayAge, birthYearNum);
+                mainTyLabel.textContent = `${displayAge}歳 (${String(currentCard).padStart(2, '0')})`;
+                mainTyName.textContent = item.cardData.name;
+                mainTyTheme.textContent = item.cardData.theme;
+                
+                // メインカードにクリックイベント
+                mainTyImage.onclick = () => showCardModal(item.cardData.id);
+            }
         });
-        thumbCurrent.classList.add('active');
-        const mainCardData = getCardData(ty0);
-        mainTyImage.src = `images/${mainCardData.file}`;
-        mainTyLabel.textContent = `${baseAge}歳 (${String(ty0).padStart(2, '0')})`;
-        mainTyName.textContent = mainCardData.name;
-        mainTyTheme.textContent = mainCardData.theme;
-        mainTyImage.onclick = () => showCardModal(mainCardData.id);
+    }
+    
+
+
+    // --- Universal Swipe Logic (Touch + Mouse) ---
+    
+    // Variables for swipe detection
+    let startY = 0;
+    let startX = 0;
+    let isDraggingY = false;
+    let isDraggingX = false;
+
+    function handleVerticalStart(y, x) {
+        startY = y;
+        startX = x;
+        isDraggingY = true;
+        isDraggingX = true;
     }
 
-    // --- Swipe & Click Navigation ---
-    let startY = 0, startX = 0, isDraggingY = false, isDraggingX = false;
-    
-    function handleVerticalStart(y, x) { startY = y; startX = x; isDraggingY = true; isDraggingX = true; }
-    function handleVerticalEnd(y, x) {
+    function handleVerticalEnd(y, x, element) {
         if(!isDraggingY && !isDraggingX) return;
-        const diffY = startY - y, diffX = startX - x;
-        if (Math.abs(diffY) < 50 && Math.abs(diffX) < 50) { isDraggingY = false; isDraggingX = false; return; }
-
-        if(tySection.classList.contains('active-view') && Math.abs(diffX) > Math.abs(diffY)) {
+        
+        const diffY = startY - y;
+        const diffX = startX - x;
+        
+        // TYページでの水平スワイプ検出（カード順移動）
+        if(tySection.classList.contains('active-view') && Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
             displayMode = 'card';
-            currentCardIndex = diffX > 0 ? Math.min(21, currentCardIndex + 1) : Math.max(0, currentCardIndex - 1);
-            updateTYDisplay();
-        } else if (Math.abs(diffY) > Math.abs(diffX)) {
-            if (diffY > 0 && bySection.classList.contains('active-view')) {
-                bySection.classList.remove('active-view');
-                tySection.classList.add('active-view');
-            } else if (diffY < 0 && tySection.classList.contains('active-view')) {
-                tySection.classList.remove('active-view');
-                bySection.classList.add('active-view');
+            if (diffX > 0) { // Left swipe -> Next card
+                currentCardIndex = Math.min(21, currentCardIndex + 1);
+                updateTYDisplay();
+            } else { // Right swipe -> Previous card
+                currentCardIndex = Math.max(0, currentCardIndex - 1);
+                updateTYDisplay();
             }
         }
-        isDraggingY = false; isDraggingX = false;
+        // 垂直スワイプ（BY <-> TY切り替え）
+        else if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 50) {
+            if (diffY > 0) { // Swipe Up -> Go to TY
+                if(bySection.classList.contains('active-view')) {
+                    bySection.classList.remove('active-view');
+                    tySection.classList.add('active-view');
+                }
+            } else { // Swipe Down -> Go to BY
+                if(tySection.classList.contains('active-view')) {
+                    tySection.classList.remove('active-view');
+                    bySection.classList.add('active-view');
+                }
+            }
+        }
+        
+        isDraggingY = false;
+        isDraggingX = false;
     }
 
-    resultScreen.addEventListener('touchstart', e => handleVerticalStart(e.touches[0].clientY, e.touches[0].clientX));
-    resultScreen.addEventListener('touchend', e => handleVerticalEnd(e.changedTouches[0].clientY, e.changedTouches[0].clientX));
-    resultScreen.addEventListener('mousedown', e => handleVerticalStart(e.clientY, e.clientX));
-    resultScreen.addEventListener('mouseup', e => handleVerticalEnd(e.clientY, e.clientX));
+    document.addEventListener('touchstart', e => handleVerticalStart(e.touches[0].clientY, e.touches[0].clientX));
+    document.addEventListener('touchend', e => handleVerticalEnd(e.changedTouches[0].clientY, e.changedTouches[0].clientX));
     
-    toTyBtn.addEventListener('click', () => { bySection.classList.remove('active-view'); tySection.classList.add('active-view'); });
-    toByBtn.addEventListener('click', () => { tySection.classList.remove('active-view'); bySection.classList.add('active-view'); });
+    document.addEventListener('mousedown', e => handleVerticalStart(e.clientY, e.clientX));
+    document.addEventListener('mouseup', e => handleVerticalEnd(e.clientY, e.clientX));
     
+    // --- Click Navigation ---
+    
+    // クリックでBY -> TY移動
+    toTyBtn.addEventListener('click', () => {
+        if(bySection.classList.contains('active-view')) {
+            bySection.classList.remove('active-view');
+            tySection.classList.add('active-view');
+        }
+    });
+    
+    // クリックでTY -> BY移動
+    toByBtn.addEventListener('click', () => {
+        if(tySection.classList.contains('active-view')) {
+            tySection.classList.remove('active-view');
+            bySection.classList.add('active-view');
+        }
+    });
+    
+    // サムネイルクリックで年齢変更
     document.querySelectorAll('.thumbnail').forEach(thumb => {
         thumb.addEventListener('click', () => {
             const offset = parseInt(thumb.dataset.offset);
@@ -386,31 +774,201 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    prevYearBtn.addEventListener('click', e => { e.stopPropagation(); displayMode = 'age'; displayAge--; updateTYDisplay(); });
-    nextYearBtn.addEventListener('click', e => { e.stopPropagation(); displayMode = 'age'; displayAge++; updateTYDisplay(); });
+    // カード左右の矢印ボタンで年齢変更（1歳ずつ）
+    prevYearBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        displayMode = 'age';
+        displayAge -= 1;
+        updateTYDisplay();
+    });
     
+    nextYearBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        displayMode = 'age';
+        displayAge += 1;
+        updateTYDisplay();
+    });
+    
+    // ホームボタンのイベント
+    function goToHome() {
+        location.reload();
+    }
+    
+    homeBtn.addEventListener('click', goToHome);
+    homeBtnTy.addEventListener('click', goToHome);
+    qaHomeBtn.addEventListener('click', goToHome);
+    shichusuimeiHomeBtn.addEventListener('click', goToHome);
+    
+    // --- QA Functions ---
+    
+    function setupQALevel(level, subLevel = 1) {
+        currentLevel = level;
+        currentSubLevel = subLevel;
+        currentQuestionIndex = 0;
+        
+        levelSelector.style.display = 'none';
+        qaMain.style.display = 'block';
+        
+        showCurrentQuestion();
+    }
+    
+    function showCurrentQuestion() {
+        const questionKey = `${currentLevel}-${currentSubLevel}`;
+        const levelQuestions = questions[questionKey];
+        
+        if (levelQuestions && currentQuestionIndex < levelQuestions.length) {
+            currentQuestion.textContent = levelQuestions[currentQuestionIndex];
+            
+            // プログレス表示を更新
+            const progressText = document.getElementById('current-progress');
+            const totalText = document.getElementById('total-questions');
+            const progressFill = document.getElementById('progress-fill');
+            
+            if (progressText) progressText.textContent = `質問 ${currentQuestionIndex + 1}`;
+            if (totalText) totalText.textContent = levelQuestions.length;
+            if (progressFill) {
+                const percentage = ((currentQuestionIndex + 1) / levelQuestions.length) * 100;
+                progressFill.style.width = `${percentage}%`;
+            }
+        } else {
+            currentQuestion.textContent = "この段階の質問は終了しました。段階が完了しました🌟";
+            nextQuestionBtn.textContent = "完了";
+            
+            // プログレスバーを100%に
+            const progressFill = document.getElementById('progress-fill');
+            if (progressFill) progressFill.style.width = '100%';
+        }
+    }
+    
+    function nextQuestion() {
+        currentQuestionIndex++;
+        showCurrentQuestion();
+    }
+    
+    function backToLevels() {
+        qaMain.style.display = 'none';
+        levelSelector.style.display = 'block';
+        currentQuestionIndex = 0;
+        nextQuestionBtn.textContent = "次の質問";
+        
+        // メインレベル選択に戻る
+        document.querySelector('.level-buttons').style.display = 'block';
+        document.getElementById('sub-level-selector').style.display = 'none';
+        
+        // プログレスバーをリセット
+        const progressFill = document.getElementById('progress-fill');
+        if (progressFill) progressFill.style.width = '0%';
+        
+        // リアクションボタンの選択状態をクリア
+        document.querySelectorAll('.reaction-btn').forEach(btn => {
+            btn.classList.remove('selected');
+        });
+    }
+    
+    // Level button events
+    document.querySelectorAll('.level-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const level = parseInt(btn.getAttribute('data-level'));
+            currentLevel = level;
+            
+            // サブレベル選択画面を表示
+            document.querySelector('.level-buttons').style.display = 'none';
+            document.getElementById('sub-level-selector').style.display = 'block';
+            
+            // レベルに応じたタイトル設定
+            const titles = {
+                1: "軽やか - どの段階から始める？",
+                2: "価値観 - どの段階から始める？", 
+                3: "秘密 - どの段階から始める？",
+                4: "シャドウ - 影の部分を探る段階を選択",
+                5: "親密 - どの段階から始める？",
+                6: "⚠️ 禁断 - 危険な段階を選択"
+            };
+            document.getElementById('sub-level-title').textContent = titles[level];
+        });
+    });
+    
+    // Sub-level button events
+    document.querySelectorAll('.sub-level-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const subLevel = parseInt(btn.getAttribute('data-sub'));
+            setupQALevel(currentLevel, subLevel);
+        });
+    });
+    
+    // Back to main levels
+    document.getElementById('back-to-main-levels').addEventListener('click', () => {
+        document.querySelector('.level-buttons').style.display = 'block';
+        document.getElementById('sub-level-selector').style.display = 'none';
+    });
+    
+    // Reaction button events
+    document.querySelectorAll('.reaction-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // 既存の選択を解除
+            document.querySelectorAll('.reaction-btn').forEach(b => b.classList.remove('selected'));
+            // 現在のボタンを選択
+            btn.classList.add('selected');
+        });
+    });
+    
+    nextQuestionBtn.addEventListener('click', () => {
+        if (nextQuestionBtn.textContent === "完了") {
+            backToLevels();
+        }
+        else {
+            nextQuestion();
+        }
+    });
+    
+    backToLevelsBtn.addEventListener('click', backToLevels);
+
+
+    
+    // --- Helper Functions ---
+    function getNewThemeFromCard(cardId) {
+        const themeMap = {
+            0: "新基盤", 1: "種を蒔く", 2: "根を張る", 3: "広大な森", 4: "戦略", 5: "知識の習得",
+            6: "仲間", 7: "切り替え", 8: "判定", 9: "遠い星", 10: "移動と変化", 11: "分岐点",
+            12: "律する", 13: "飛び回る", 14: "乗り換え", 15: "欲望", 16: "破壊と再生",
+            17: "新しい星", 18: "幻想", 19: "正解", 20: "完結", 21: "銀河"
+        };
+        return themeMap[cardId];
+    }
+
+
     // --- Modal Functions ---
     function showCardModal(cardId) {
         const card = getCardData(cardId);
         if (!card) return;
 
-        const features = cardFeaturesData[cardId] || {};
-        const implications = cardImplicationsData[cardId] || {};
-
+        // --- Populate Modal Header ---
         modalCardImage.src = `images/${card.file}`;
         modalCardName.textContent = card.name;
         modalCardTheme.textContent = card.theme;
 
-        document.getElementById('modal-card-features-theme').textContent = features.theme || '---';
-        document.getElementById('modal-card-features-traits').textContent = features.traits || '---';
-        document.getElementById('modal-card-features-advice').textContent = features.advice || '---';
-        document.getElementById('modal-card-implications-upright').textContent = implications.upright || '---';
+        // --- Populate Features Tab ---
+        // Extract the new theme from relatedWords (e.g., "新基盤" from "魂のアップデート / プロローグの開示")
+        const newTheme = getNewThemeFromCard(cardId);
+        document.getElementById('modal-card-features-theme').textContent = newTheme || '---';
+        document.getElementById('modal-card-features-traits').textContent = card.relatedWords || '---';
+        document.getElementById('modal-card-features-advice').textContent = card.advice || '---';
+
+        // --- Populate Implications Tab ---
+        document.getElementById('modal-card-implications-upright').textContent = card.implications || '---';
         
+        // --- Reset and Show ---
         // Reset to the first tab
-        document.querySelectorAll('#card-modal .tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('#card-modal .modal-tab-content').forEach(c => c.classList.remove('active'));
-        document.querySelector('#card-modal .tab-btn[data-tab="features"]').classList.add('active');
-        document.getElementById('tab-content-features').classList.add('active');
+        const firstTab = document.querySelector('.tab-btn[data-tab="features"]');
+        const firstTabContent = document.getElementById('tab-content-features');
+        
+        document.querySelectorAll('.tab-btn.active').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.modal-tab-content.active').forEach(c => c.classList.remove('active'));
+        
+        if (firstTab && firstTabContent) {
+            firstTab.classList.add('active');
+            firstTabContent.classList.add('active');
+        }
         
         cardModal.style.display = 'block';
     }
@@ -419,26 +977,45 @@ document.addEventListener('DOMContentLoaded', () => {
         cardModal.style.display = 'none';
     }
 
+    // --- Birth Card Modal Functions ---
     function showBirthCardModal(cardId) {
         const card = getCardData(cardId);
         if (!card) return;
 
-        const birthData = birthCardData[cardId] || {};
+        // --- Populate Birth Modal Header ---
         birthModalCardImage.src = `images/${card.file}`;
         birthModalCardName.textContent = card.name;
         birthModalCardTheme.textContent = card.theme;
 
-        document.getElementById('birth-card-theme-content').textContent = birthData.themeContent || '---';
-        document.getElementById('birth-card-symbol-content').textContent = birthData.symbolContent || '---';
-        document.getElementById('birth-card-positive-traits').textContent = birthData.positiveTraits || '---';
-        document.getElementById('birth-card-negative-traits').textContent = birthData.negativeTraits || '---';
-        document.getElementById('birth-card-celebrities-content').textContent = birthData.celebrities || '---';
+        // --- Populate Birth Card Tabs ---
+        const birthData = birthCardData[cardId];
+        if (birthData) {
+            document.getElementById('birth-card-theme-content').textContent = birthData.themeContent || 'テーマ内容（準備中）';
+            document.getElementById('birth-card-symbol-content').textContent = birthData.symbolContent || '象徴内容（準備中）';
+            document.getElementById('birth-card-positive-traits').textContent = birthData.positiveTraits || 'ポジティブな特性（準備中）';
+            document.getElementById('birth-card-negative-traits').textContent = birthData.negativeTraits || 'ネガティブな特性（準備中）';
+            document.getElementById('birth-card-celebrities-content').textContent = birthData.celebrities || '有名人（準備中）';
+        } else {
+            document.getElementById('birth-card-theme-content').textContent = 'テーマ内容（準備中）';
+            document.getElementById('birth-card-symbol-content').textContent = '象徴内容（準備中）';
+            document.getElementById('birth-card-positive-traits').textContent = 'ポジティブな特性（準備中）';
+            document.getElementById('birth-card-negative-traits').textContent = 'ネガティブな特性（準備中）';
+            document.getElementById('birth-card-celebrities-content').textContent = '有名人（準備中）';
+        }
         
+        // --- Reset and Show Birth Modal ---
         // Reset to the first tab
-        document.querySelectorAll('#birth-card-modal .tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('#birth-card-modal .modal-tab-content').forEach(c => c.classList.remove('active'));
-        document.querySelector('#birth-card-modal .tab-btn[data-tab="birth-theme"]').classList.add('active');
-        document.getElementById('birth-tab-content-theme').classList.add('active');
+        const firstBirthTab = document.querySelector('.tab-btn[data-tab="birth-theme"]');
+        const firstBirthTabContent = document.getElementById('birth-tab-content-theme');
+        
+        // Remove active classes from birth modal tabs
+        birthCardModal.querySelectorAll('.tab-btn.active').forEach(b => b.classList.remove('active'));
+        birthCardModal.querySelectorAll('.modal-tab-content.active').forEach(c => c.classList.remove('active'));
+        
+        if (firstBirthTab && firstBirthTabContent) {
+            firstBirthTab.classList.add('active');
+            firstBirthTabContent.classList.add('active');
+        }
         
         birthCardModal.style.display = 'block';
     }
@@ -447,51 +1024,68 @@ document.addEventListener('DOMContentLoaded', () => {
         birthCardModal.style.display = 'none';
     }
 
-    closeModal.addEventListener('click', hideCardModal);
-    cardModal.addEventListener('click', e => { if (e.target === cardModal) hideCardModal(); });
-    closeBirthModal.addEventListener('click', hideBirthCardModal);
-    birthCardModal.addEventListener('click', e => { if (e.target === birthCardModal) hideBirthCardModal(); });
+    // --- Modal Event Listeners ---
+    closeModal.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        hideCardModal();
+    });
 
-    document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') {
+    cardModal.addEventListener('click', (e) => {
+        if (e.target === cardModal) {
             hideCardModal();
+        }
+    });
+
+    closeBirthModal.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        hideBirthCardModal();
+    });
+
+    birthCardModal.addEventListener('click', (e) => {
+        if (e.target === birthCardModal) {
             hideBirthCardModal();
         }
     });
 
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && cardModal.style.display === 'block') {
+            hideCardModal();
+        }
+    });
+
+    // Tab switching logic for both modals
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const tab = btn.dataset.tab;
-            const modal = btn.closest('.modal');
+            
+            // Determine which modal this tab belongs to
+            const isInBirthModal = btn.closest('#birth-card-modal');
+            const modal = isInBirthModal ? birthCardModal : cardModal;
+
+            // Deactivate all tabs and content within the specific modal
             modal.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             modal.querySelectorAll('.modal-tab-content').forEach(c => c.classList.remove('active'));
+
+            // Activate clicked tab
             btn.classList.add('active');
-            modal.querySelector(`.modal-tab-content[id*="${tab}"]`).classList.add('active');
+            
+            // Activate corresponding content
+            if (isInBirthModal) {
+                const contentElement = document.getElementById(`birth-tab-content-${tab.replace('birth-', '')}`);
+                if (contentElement) {
+                    contentElement.classList.add('active');
+                }
+            } else {
+                const contentElement = document.getElementById(`tab-content-${tab}`);
+                if (contentElement) {
+                    contentElement.classList.add('active');
+                }
+            }
         });
     });
 
-    // --- Run Initialization ---
-    initializeApp();
+    // Make showCardModal globally available
+    window.showCardModal = showCardModal;
 });
-
-// --- Data outside DOMContentLoaded ---
-const ANIMAL_DATA = {
-    "狼": { group: "月", icon: "🐺", description: "自分だけの時間と空間を大切にする個性派。ユニークな発想力の持ち主。" },
-    "こじか": { group: "月", icon: "🦌", description: "甘えん坊で寂しがり屋。愛情深く、人との絆を何よりも大切にする。" },
-    "猿": { group: "月", icon: "🐒", description: "楽しいことが大好きで、じっとしていられないエンターテイナー。" },
-    "チータ": { group: "太陽", icon: "🐆", description: "常に前向きで、成功願望が強いチャレンジャー。プライドが高い一面も。" },
-    "黒ひょう": { group: "太陽", icon: "🐈‍⬛", description: "スマートでおしゃれ。新しいものが好きで、リーダーシップを発揮する。" },
-    "ライオン": { group: "太陽", icon: "🦁", description: "完璧主義で、自分にも他人にも厳しい王様。教えることが得意。" },
-    "虎": { group: "地球", icon: "🐅", description: "面倒見が良く、バランス感覚に優れた自信家。悠然と構えている。" },
-    "たぬき": { group: "地球", icon: "🦝", description: "愛嬌があり、誰からも好かれる天然キャラ。経験と実績を重んじる。" },
-    "子守熊": { group: "地球", icon: "🐨", description: "サービス精神旺盛なロマンチスト。最悪のケースを想定して行動する。" },
-    "ゾウ": { group: "地球", icon: "🐘", description: "努力と根性の塊。プロ意識が高く、一度決めたことはやり遂げる。" },
-    "ひつじ": { group: "月", icon: "🐑", description: "寂しがり屋で、仲間と群れるのが好き。客観的な情報やデータを重視する。" },
-    "ペガサス": { group: "太陽", icon: "🐎", description: "束縛を嫌う自由人。気分屋で、ピンとくる感性を何よりも大切にする。" }
-};
-
-const GROUP_DATA = {
-    "月": { name: "月グループ", description: "人間関係を第一に考える「いい人」タイプ。形よりも心を大切にし、相手の気持ちに寄り添うことを得意とします。" },
-    "地球": { name: "地球グループ", description: "現実的で、自分軸をしっかり持つタイプ。ペースを乱されることを嫌い、目標に向かって着実に進みます。" },
-    "太陽": { name: "太陽グループ", description: "感覚や感性を重視する天才肌。自由な発想で、エネルギッシュに物事を進めていく力を持っています。" }
-};

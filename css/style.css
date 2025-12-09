@@ -168,7 +168,7 @@ button#calc-btn {
 }
 
 .arcana-image {
-    width: 160px; /* 半分のサイズに変更 */
+    width: 320px;
     height: auto;
     mix-blend-mode: screen;
 }

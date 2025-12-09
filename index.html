@@ -25,8 +25,8 @@
                     <span class="btn-desc">本質を見つける旅</span>
                 </button>
                 <button id="shichusuimei-btn" class="entrance-btn">
-                    <span class="btn-text">ANIMAL FORTUNE</span>
-                    <span class="btn-desc">動物占いモード</span>
+                    <span class="btn-text">SHICHUSUIMEI</span>
+                    <span class="btn-desc">四柱推命モード</span>
                 </button>
             </div>
         </div>
@@ -193,8 +193,8 @@
     <section id="shichusuimei-screen" class="screen">
         <div class="shichusuimei-container">
             <div class="shichusuimei-header">
-                <h2>動物占い</h2>
-                <p>生年月日からあなたの動物タイプを占います</p>
+                <h2>四柱推命</h2>
+                <p>あなたの四つの柱を読み解きます</p>
             </div>
 
             <div class="shichusuimei-input-container" id="shichusuimei-input">
@@ -223,6 +223,51 @@
                     <p id="group-description">感受性豊かで情緒的。直感力に優れ、芸術的センスを持つ</p>
                 </div>
 
+                <!-- 四柱結果 -->
+                <div class="shichusuimei-result-grid">
+                    <div class="shichusuimei-result-card surface">
+                        <div class="card-label">表面</div>
+                        <div class="card-animal-icon" id="surface-icon">🐺</div>
+                        <div class="card-kanshi-name" id="result-surface-name">甲子</div>
+                        <div class="card-animal-name" id="result-surface-animal">穏やかな狼</div>
+                    </div>
+                    <div class="shichusuimei-result-card hope">
+                        <div class="card-label">希望</div>
+                        <div class="card-animal-icon" id="hope-icon">🐎</div>
+                        <div class="card-kanshi-name" id="result-hope-name">乙丑</div>
+                        <div class="card-animal-name" id="result-hope-animal">ペガサス</div>
+                    </div>
+                    <div class="shichusuimei-result-card essence">
+                        <div class="card-label">本質</div>
+                        <div class="card-animal-icon" id="essence-icon">🐨</div>
+                        <div class="card-kanshi-name" id="result-essence-name">丙寅</div>
+                        <div class="card-animal-name" id="result-essence-animal">コアラ</div>
+                    </div>
+                    <div class="shichusuimei-result-card hidden">
+                        <div class="card-label">隠れ</div>
+                        <div class="card-animal-icon" id="hidden-icon">🦝</div>
+                        <div class="card-kanshi-name" id="result-hidden-name">丁卯</div>
+                        <div class="card-animal-name" id="result-hidden-animal">たぬき</div>
+                        <div class="card-note">※参考値</div>
+                    </div>
+                </div>
+
+                <!-- 動物一覧表示 -->
+                <div class="animals-list" id="animals-list">
+                    <div class="group-section">
+                        <h4 class="group-title moon">🌙 月グループ</h4>
+                        <div class="animals-grid moon-animals" id="moon-animals"></div>
+                    </div>
+                    <div class="group-section">
+                        <h4 class="group-title earth">🌍 地球グループ</h4>
+                        <div class="animals-grid earth-animals" id="earth-animals"></div>
+                    </div>
+                    <div class="group-section">
+                        <h4 class="group-title sun">☀️ 太陽グループ</h4>
+                        <div class="animals-grid sun-animals" id="sun-animals"></div>
+                    </div>
+                </div>
+                
                 <button id="shichusuimei-back-btn" class="control-btn secondary">戻る</button>
             </div>
             
