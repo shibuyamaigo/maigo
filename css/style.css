@@ -364,9 +364,10 @@ button#calc-btn {
 .qa-container {
     padding: 30px; text-align: center; height: 100%;
     display: flex; flex-direction: column; justify-content: center; position: relative;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(20, 20, 20, 0.85);
     border-radius: 15px;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     margin: 20px;
 }
 .qa-header h2 { color: var(--gold); font-size: 1.8rem; margin-bottom: 10px; letter-spacing: 2px; }
