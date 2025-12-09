@@ -1088,4 +1088,117 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Make showCardModal globally available
     window.showCardModal = showCardModal;
+
+    // --- ADULT MODE FUNCTIONALITY ---
+    let currentAdultLevel = 1;
+    let currentAdultQuestionIndex = 0;
+    let currentAdultQuestions = [];
+
+    // Adult mode event listeners
+    document.getElementById('adult-btn').addEventListener('click', () => {
+        showScreen('adult-screen');
+    });
+
+    document.getElementById('adult-home-btn').addEventListener('click', () => {
+        showScreen('title-screen');
+    });
+
+    // Adult level selection
+    document.querySelectorAll('.adult-level-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentAdultLevel = parseInt(btn.getAttribute('data-level'));
+            startAdultQuestions();
+        });
+    });
+
+    // Adult navigation
+    document.getElementById('next-adult-question-btn').addEventListener('click', () => {
+        nextAdultQuestion();
+    });
+
+    document.getElementById('back-to-adult-levels-btn').addEventListener('click', () => {
+        backToAdultLevels();
+    });
+
+    // Adult reactions
+    document.querySelectorAll('.adult-reaction-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Remove previous selections
+            document.querySelectorAll('.adult-reaction-btn').forEach(b => b.classList.remove('selected'));
+            // Add selection to current button
+            btn.classList.add('selected');
+            
+            // Add reaction effect
+            btn.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                btn.style.transform = 'scale(1.05)';
+            }, 150);
+        });
+    });
+
+    function startAdultQuestions() {
+        currentAdultQuestionIndex = 0;
+        currentAdultQuestions = ADULT_QUESTIONS[`level${currentAdultLevel}`] || [];
+        
+        document.getElementById('level-selector-adult').style.display = 'none';
+        document.getElementById('adult-main').style.display = 'block';
+        
+        updateAdultDisplay();
+    }
+
+    function updateAdultDisplay() {
+        if (!currentAdultQuestions || currentAdultQuestions.length === 0) {
+            document.getElementById('current-adult-question').textContent = '質問がありません';
+            return;
+        }
+
+        const question = currentAdultQuestions[currentAdultQuestionIndex];
+        const levelInfo = ADULT_LEVEL_INFO[currentAdultLevel];
+        
+        // Update question
+        document.getElementById('current-adult-question').textContent = question;
+        
+        // Update danger indicator
+        document.getElementById('danger-level').textContent = levelInfo.danger;
+        document.getElementById('danger-text').textContent = levelInfo.name;
+        
+        // Update progress
+        document.getElementById('current-adult-progress').textContent = `質問 ${currentAdultQuestionIndex + 1}`;
+        document.getElementById('total-adult-questions').textContent = currentAdultQuestions.length;
+        
+        const progress = ((currentAdultQuestionIndex + 1) / currentAdultQuestions.length) * 100;
+        document.getElementById('adult-progress-fill').style.width = progress + '%';
+        
+        // Update next button text
+        const nextBtn = document.getElementById('next-adult-question-btn');
+        if (currentAdultQuestionIndex === currentAdultQuestions.length - 1) {
+            nextBtn.textContent = 'レベル完了';
+        } else {
+            nextBtn.textContent = '次の質問';
+        }
+        
+        // Clear previous reactions
+        document.querySelectorAll('.adult-reaction-btn').forEach(b => b.classList.remove('selected'));
+    }
+
+    function nextAdultQuestion() {
+        if (currentAdultQuestionIndex < currentAdultQuestions.length - 1) {
+            currentAdultQuestionIndex++;
+            updateAdultDisplay();
+        } else {
+            // Level completed
+            showAdultLevelCompletion();
+        }
+    }
+
+    function showAdultLevelCompletion() {
+        const levelInfo = ADULT_LEVEL_INFO[currentAdultLevel];
+        alert(`🔥 ${levelInfo.name} 完了！\n\n危険度: ${levelInfo.danger}\n\nお疲れ様でした！\n\n※ 次のレベルはさらに危険です...`);
+        backToAdultLevels();
+    }
+
+    function backToAdultLevels() {
+        document.getElementById('adult-main').style.display = 'none';
+        document.getElementById('level-selector-adult').style.display = 'block';
+    }
 });
