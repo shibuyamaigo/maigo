@@ -356,10 +356,7 @@ button#calc-btn {
 }
 
 #qa-screen {
-    background-image: url('../images/journey.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+    /* Background handled by changeScreen function like other screens */
 }
 
 .qa-container {
