@@ -357,18 +357,17 @@ button#calc-btn {
 
 #qa-screen {
     /* Background handled by changeScreen function like other screens */
-    /* Fallback background in case changeScreen fails */
-    background-color: #1a1a1a;
 }
 
 .qa-container {
     padding: 30px; text-align: center; height: 100%;
     display: flex; flex-direction: column; justify-content: center; position: relative;
-    background: rgba(20, 20, 20, 0.85);
+    background: rgba(20, 20, 20, 0.85) !important;
     border-radius: 15px;
-    backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px) !important;
     border: 1px solid rgba(255, 255, 255, 0.1);
     margin: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 .qa-header h2 { color: var(--gold); font-size: 1.8rem; margin-bottom: 10px; letter-spacing: 2px; }
 .qa-header p { color: #aaa; font-size: 0.9rem; margin-bottom: 30px; letter-spacing: 1px; }
